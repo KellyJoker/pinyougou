@@ -17,112 +17,10 @@
 	<!-- 分页组件结束 -->
 	<link rel="stylesheet" href="../plugins/angularjs/pagination.css">
 	
-    <script type="text/javascript">
-    	//定义一个模块
-    	var app = angular.module("pinyougou",['pagination']);
-    	//定义控制器
-    	app.controller("brandController",function($scope,$http){
-    		//定义方法-查询所有-为分页
-    		$scope.findAll=function(){
-    			//向后台发送请求
-    			$http.get("/brand/findAll.do").success(
-    				//接收后台发过来的数据
-    				function(response){
-    					$scope.list=response;
-    				}
-    			)
-    		};
-    		
-    		//查询所有-分页
-    		$scope.findPage=function(pageNum,pageSize){
-    			//发送后台请求
-    			$http.post("/brand/findPage.do?pageNum="+pageNum+"&pageSize="+pageSize).success(
-    				//接收请求		
-    				function(response) {
-    					//每页显示的集合
-						$scope.list=response.rowsList;
-    					//更新总记录数
-						$scope.paginationConf.totalItems=response.total;
-					}
-    			)
-    			
-    		};
-    		
-    		//重新加载
-    		$scope.reloadList=function(){
-    			$scope.findPage($scope.paginationConf.currentPage,$scope.paginationConf.itemsPerPage);
-    		};
-    		
-    		//分页控件配置
-    		$scope.paginationConf = {
-	    		currentPage: 1,	  //当前页码
-	    		totalItems: 10,	  //总记录数
-	    		itemsPerPage: 10, //每页显示的条数
-	    		perPageOptions: [5, 15, 20, 25, 30],//每页显示条数的选项
-	    		onChange: function(){//更改页面时触发的事件
-	    			$scope.reloadList();//重新加载
-	    		}
-    		};
-    		
-    		//添加品牌信息
-    		$scope.save=function(){
-    			var　methodName="update";
-    			if($scope.entity.id==null){
-    				methodName="add";
-    			};
-    			$http.post("/brand/"+methodName+".do",$scope.entity).success(
-	    				function(response){
-							if(response.flag){
-								$scope.reloadList();
-								alert(response.message);
-							}else{
-								alert(response.message);
-							}    					
-	    				}		
-	    			)    			
-    		};
-    		
-    		//根据id查找品牌信息
-    		$scope.findOne=function(id){
-    			$http.get("/brand/findOne.do?id="+id).success(
-    				function(response){
-    					$scope.entity=response;
-    				}		
-    			)
-    		};
-    		
-    		$scope.ids=[];
-    		//更新id数组
-    		$scope.updateIds=function($event,id){
-    			if($event.target.checked){
-    				$scope.ids.push(id);
-    			}else{
-    				var index=$scope.ids.indexOf(id);
-    				$scope.ids.splice(index,1);
-    			}
-    			
-    		}
-    		
-    		//删除
-    		$scope.delSelected=function(){
-    				if(confirm("您确定要删除所选信息么?")){
-        				$http.post("/brand/delete.do?ids="+$scope.ids).success(
-        	    				function(response){
-        	    					if(response.flag){
-        	    						$scope.reloadList();
-        	    						alert(response.message);
-        	    					}else{
-        	    						alert(response.message);
-        	    					}
-        	    				}
-        	    		)
-        			}
-    		}
-    		
-    	})
-    	
-    </script>
-
+    <script src="../js/base_pagination.js"></script>
+    <script src="../js/service/brandService.js"></script>
+    <script src="../js/controller/baseController.js"></script>
+	<script src="../js/controller/brandController.js"></script>
     
 </head>
 <body class="hold-transition skin-red sidebar-mini"  ng-app="pinyougou" ng-controller="brandController">
@@ -144,6 +42,15 @@
                                         <button type="button" class="btn btn-default" title="删除" ng-click="delSelected()" ><i class="fa fa-trash-o"></i> 删除</button>           
                                         <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
                                     </div>
+                                    
+                             <div class="box-tools pull-right">
+                                <div class="has-feedback">
+                                	 品牌名称:<input type="text" ng-model="searchEntity.name">
+                                	  品牌首字母:<input type="text" ng-model="searchEntity.firstChar"> 
+                                	 <input class="btn btn-default" ng-click="reloadList()" type="button" value="搜索">
+                                </div>
+                            </div>
+                                    
                                 </div>
                             </div>
                             <div class="box-tools pull-right">
@@ -179,7 +86,6 @@
 			                      </tbody>
 			                  </table>
 			                  <!--数据列表/-->                        
-							 
                         </div>
                         <!-- 数据表格 /-->
                         

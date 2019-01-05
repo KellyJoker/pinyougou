@@ -50,7 +50,7 @@
     		
     		//重新加载
     		$scope.reloadList=function(){
-    			$scope.findPage($scope.paginationConf.currentPage,$scope.paginationConf.itemsPerPage);
+    			$scope.search($scope.paginationConf.currentPage,$scope.paginationConf.itemsPerPage);
     		};
     		
     		//分页控件配置
@@ -105,19 +105,37 @@
     		
     		//删除
     		$scope.delSelected=function(){
-    			$http.post("/brand/delete.do?ids="+$scope.ids).success(
-    				function(response){
-    					if(response.flag){
-    						$scope.reloadList();
-    						alert(response.message);
-    					}else{
-    						alert(response.message);
-    					}
-    				}
-    			)
+    			
+    			//如果数组长度大于0
+    			if($scope.ids.length>0){
+    				if(confirm("您确定要删除所选信息么?")){
+        				$http.post("/brand/delete.do?ids="+$scope.ids).success(
+        	    				function(response){
+        	    					if(response.flag){
+        	    						$scope.reloadList();
+        	    						alert(response.message);
+        	    					}else{
+        	    						alert(response.message);
+        	    					}
+        	    				}
+        	    		)
+        			}
+    			}
+    			
     		}
     		
+    		//定义搜索对象
+    		$scope.searchEntity={};
     		
+    		//模糊查询
+    		$scope.search=function(pageNum,pageSize){
+    			$http("/brand/search.do?pageNum="+pageNum+"&pageSize="+pageSize,$scope.searchEntity).success(
+    				function(response){
+    					$scope.list=response.rowsList;
+    					$scope.paginationConf.totalItems=response.total;
+    				}		
+    			)
+    		}
     		
     	})
     	
@@ -144,6 +162,15 @@
                                         <button type="button" class="btn btn-default" title="删除" ng-click="delSelected()" ><i class="fa fa-trash-o"></i> 删除</button>           
                                         <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
                                     </div>
+                                    
+                             <div class="box-tools pull-right">
+                                <div class="has-feedback">
+                                	 品牌名称:<input type="text" ng-model="searchEntity.name">
+                                	  品牌首字母:<input type="text" ng-model="searchEntity.firstChar"> 
+                                	 <input class="btn btn-default" ng-click="search()" type="button" value="搜索">
+                                </div>
+                            </div>
+                                    
                                 </div>
                             </div>
                             <div class="box-tools pull-right">
@@ -179,7 +206,6 @@
 			                      </tbody>
 			                  </table>
 			                  <!--数据列表/-->                        
-							 
                         </div>
                         <!-- 数据表格 /-->
                         

@@ -100,8 +100,17 @@ public class BrandController {
 		}
 	}
 	
-	
-	
+	/**
+	 * 模糊查询-分页
+	 * @param brand
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	@RequestMapping("/search")
+	public PageResult search(@RequestBody TbBrand brand,Integer pageNum,Integer pageSize) {
+		return brandService.findPage(brand, pageNum, pageSize);
+	}
 	
 	
 	
