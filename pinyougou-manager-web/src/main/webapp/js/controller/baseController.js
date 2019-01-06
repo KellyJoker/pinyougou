@@ -27,4 +27,20 @@ app.controller('baseController',function($scope){
 		}
 		
 	}
+	
+
+		$scope.jsonToString = function(jsonString, key) {
+		var json = JSON.parse(jsonString);// 将 json 字符串转换为 json 对象
+		var value = "";
+		for (var i = 0; i < json.length; i++) {
+			if (i > 0) {
+				value += ","
+			}
+			value += json[i][key];
+		}
+		return value;
+	}
+	
+	
+	
 })

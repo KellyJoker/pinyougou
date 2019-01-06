@@ -1,6 +1,7 @@
 package com.pinyougou.manager.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,13 +36,13 @@ public class BrandController {
 	
 	/**
 	 * 查询所有品牌信息-分页
-	 * @param pageNum
-	 * @param pageSize
+	 * @param page
+	 * @param rows
 	 * @return
 	 */
 	@RequestMapping("/findPage")
-	public PageResult findPage(Integer pageNum,Integer pageSize) {
-		return brandService.findPage(pageNum, pageSize);
+	public PageResult findPage(Integer page,Integer rows) {
+		return brandService.findPage(page, rows);
 	}
 	
 	/**
@@ -103,16 +104,18 @@ public class BrandController {
 	/**
 	 * 模糊查询-分页
 	 * @param brand
-	 * @param pageNum
-	 * @param pageSize
+	 * @param page
+	 * @param rows
 	 * @return
 	 */
 	@RequestMapping("/search")
-	public PageResult search(@RequestBody TbBrand brand,Integer pageNum,Integer pageSize) {
-		return brandService.findPage(brand, pageNum, pageSize);
+	public PageResult search(@RequestBody TbBrand brand,Integer page,Integer rows) {
+		return brandService.findPage(brand, page, rows);
 	}
 	
-	
-	
+	@RequestMapping("/selectOptionList")
+	public List<Map> selectOptionList(){
+		return brandService.selectOptionList();
+	}
 	
 }
