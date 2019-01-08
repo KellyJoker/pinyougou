@@ -26,7 +26,10 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 	$scope.findOne=function(id){				
 		typeTemplateService.findOne(id).success(
 			function(response){
-				$scope.entity= response;					
+				$scope.entity=response;
+				$scope.entity.brandIds=JSON.parse($scope.entity.brandIds);		
+				$scope.entity.specIds=JSON.parse($scope.entity.specIds);
+				$scope.entity.customAttributeItems=JSON.parse($scope.entity.customAttributeItems);
 			}
 		);				
 	}
@@ -41,9 +44,10 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 		}				
 		serviceObject.success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					//重新查询 
 		        	$scope.reloadList();//重新加载
+		        	alert(response.message);
 				}else{
 					alert(response.message);
 				}
@@ -55,9 +59,9 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 	//批量删除 
 	$scope.dele=function(){			
 		//获取选中的复选框			
-		typeTemplateService.dele( $scope.selectIds ).success(
+		typeTemplateService.dele( $scope.ids ).success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					$scope.reloadList();//刷新列表
 					$scope.selectIds=[];
 				}						
@@ -81,9 +85,13 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 	$scope.addTableRow=function(){
 		$scope.entity.customAttributeItems.push({});
 	}
+	//删除选项行
+	$scope.delTableRow=function(index){
+		$scope.entity.customAttributeItems.splice(index,1);
+	}
 	
 	$scope.brandList={data:[{id:1,text:'联想'},{id:2,text:'华为'},{id:3,text:'小米'}]};
-	
+	//获取品牌下拉列表
 	$scope.selectOptionList=function(){
 		brandService.selectOptionList().success(
 				function(response){
@@ -93,7 +101,7 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 	}
 	
 	$scope.specList={data:[]};
-	
+	//获取规格下拉列表
 	$scope.selectSpecList=function(){
 		specificationService.selectOptionList().success(
 				function(response){

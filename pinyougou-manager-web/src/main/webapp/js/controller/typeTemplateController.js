@@ -85,13 +85,13 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 	$scope.addTableRow=function(){
 		$scope.entity.customAttributeItems.push({});
 	}
-	
+	//删除选项行
 	$scope.delTableRow=function(index){
 		$scope.entity.customAttributeItems.splice(index,1);
 	}
 	
 	$scope.brandList={data:[{id:1,text:'联想'},{id:2,text:'华为'},{id:3,text:'小米'}]};
-	
+	//获取品牌下拉列表
 	$scope.selectOptionList=function(){
 		brandService.selectOptionList().success(
 				function(response){
@@ -101,7 +101,7 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 	}
 	
 	$scope.specList={data:[]};
-	
+	//获取规格下拉列表
 	$scope.selectSpecList=function(){
 		specificationService.selectOptionList().success(
 				function(response){
