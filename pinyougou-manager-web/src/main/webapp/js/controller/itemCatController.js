@@ -37,13 +37,15 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 		if($scope.entity.id!=null){//如果有ID
 			serviceObject=itemCatService.update( $scope.entity ); //修改  
 		}else{
+			$scope.entity.parentId=$scope.parentId;//添加上级id
+			//alert($scope.parentId);
 			serviceObject=itemCatService.add( $scope.entity  );//增加 
 		}				
 		serviceObject.success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					//重新查询 
-		        	$scope.reloadList();//重新加载
+		        	$scope.findByParentId($scope.parentId);
 				}else{
 					alert(response.message);
 				}
@@ -76,5 +78,43 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 			}			
 		);
 	}
+	
+	$scope.parentId=0;//上级id
+	$scope.findByParentId=function(parentId){
+		//记住上级id
+		$scope.parentId=parentId;
+		itemCatService.findByParentId(parentId).success(
+			function(response){
+				$scope.list=response;
+			}
+		)
+	}
+	
+	//面包屑显示栏
+	//定义层级
+	$scope.grade = 1;
+	
+	$scope.setGrade=function(value){
+		$scope.grade = value;
+	}
+	
+	$scope.selectList=function(entity){
+		//判断层级
+		if($scope.grade==1){
+			$scope.entity_1=null;
+			$scope.entity_2=null;
+		}
+		if($scope.grade==2){
+			$scope.entity_1=entity;
+			$scope.entity_2=null;
+		}
+		if($scope.grade==3){
+			$scope.entity_2=entity;
+		}
+		
+		$scope.findByParentId(entity.id)
+	}
+	
+	
     
 });	

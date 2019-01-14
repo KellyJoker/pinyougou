@@ -11,7 +11,7 @@
 			http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<!-- 以下页面不被拦截 -->
-	<http pattern="/login.html" security="none"></http>
+	<http pattern="/*.html" security="none"></http>
 	<http pattern="/css/**" security="none"></http>
 	<http pattern="/img/**" security="none"></http>
 	<http pattern="/js/**" security="none"></http>
@@ -20,7 +20,7 @@
 	
 	<!-- 页面拦截规则 -->
 	<http use-expressions="false">
-		<intercept-url pattern="/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/**" access="ROLE_SELLER" />
 		<form-login login-page="/shoplogin.html" default-target-url="/admin/index.html" authentication-failure-url="/shoplogin.html" always-use-default-target="true"/>
 		<csrf disabled="true"/>
 		<headers>
@@ -32,21 +32,21 @@
 	<!-- 认证管理器 -->
 	<authentication-manager>
 		<authentication-provider user-service-ref="userDetailService">
+			<password-encoder ref="bcryptEncoder"></password-encoder>
 		</authentication-provider> 
 	</authentication-manager>
-		
-	<beans:bean id="userDetailService" class="com.pinyougou.service.UserDetailsServiceImpl"></beans:bean>
 	
+	<!-- 认证类 -->
+	<beans:bean id="userDetailService" class="com.pinyougou.service.UserDetailsServiceImpl">
+	<beans:property name="sellerService" ref="sellerService"/>
+	</beans:bean>
+		
 	<!-- 引用 dubbo 服务 -->
 	<dubbo:application name="pinyougou-shop-web" />
 	<dubbo:registry address="zookeeper://192.168.25.128:2181"/>
-	<dubbo:reference id="sellerService"
-		interface="com.pinyougou.sellergoods.service.SellerService" >
-	</dubbo:reference>
+	<dubbo:reference id="sellerService" interface="com.pinyougou.sellergoods.service.SellerService" ></dubbo:reference>
 	
-	<beans:bean id="userDetailService"
-		class="com.pinyougou.service.UserDetailsServiceImpl">
-	<beans:property name="sellerService" ref="sellerService"/>
-	</beans:bean>
+	<beans:bean id="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+	
 	
 </beans:beans>
